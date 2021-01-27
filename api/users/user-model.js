@@ -7,5 +7,16 @@ module.exports = {
 
     add(user) {
         return db('users').insert(user)
-    }
+    },
+
+    findBy(filter) {
+        return db('users as u')
+        .where(filter)
+    },
+
+    findById(id) {
+        return db('users')
+        .select('users.user_id')
+        .where("users.user_id", id)
+    }   
 }

@@ -32,7 +32,22 @@ const credentials = req.body
 })
 
 router.post('/login', (req, res) => {
-    
+    const { name, password } = req.body
+    console.log('body ', req.body)
+    Users.findBy({ name: name })
+    .then(([user]) => {
+        console.log(user)
+        if (user && bcryptjs.compareSync(password, user.password)) {
+            const token = generateToken(user)
+            res.status(200).json({ message: "succesfully logged in", token })
+        } else {
+            res.status(401).json({ message: 'incorrect username or password' })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json(err.message)
+    })
 })
 
 function generateToken(user) {
@@ -43,7 +58,7 @@ function generateToken(user) {
     }
 
     const options = {
-        expiresIn: '1d'
+        expiresIn: 1
     }
 
     return jwt.sign(payload, jwtSecret, options)
